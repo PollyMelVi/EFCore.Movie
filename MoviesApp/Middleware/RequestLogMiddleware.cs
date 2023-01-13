@@ -24,7 +24,12 @@ namespace MoviesApp.Middleware
             {
                 _logger.LogDebug($"Query: {string.Join(", ", from q in httpContext.Request.Query select $"{q.Key} = {String.Join(", ", q.Value)}")};\n" +
                                  $"Request: {httpContext.Request.Path}\n" +
-                                 $"Method: {httpContext.Request.Method}");
+                                 $"Method: {httpContext.Request.Method}\n" +
+                                 $"Protocol: {httpContext.Request.Protocol}\n" +
+                                 $"ContentLength: {httpContext.Request.ContentLength}\n" +
+                                 $"ContentType: {httpContext.Request.ContentType}\n" +
+                                 $"Host: {httpContext.Request.Host.Value}\n" +
+                                 $"IsHttps: {httpContext.Request.IsHttps}");
             }
             await _next(httpContext);
         }
