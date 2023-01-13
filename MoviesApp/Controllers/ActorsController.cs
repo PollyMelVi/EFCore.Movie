@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using MoviesApp.Data;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MoviesApp.Filters;
 using MoviesApp.Models;
 using MoviesApp.ViewModels;
 
@@ -12,25 +15,22 @@ public class ActorsController : Controller
 {
     private readonly MoviesContext _context;
     private readonly ILogger<HomeController> _logger;
+    private readonly IMapper _mapper;
 
 
-        public ActorsController(MoviesContext context, ILogger<HomeController> logger)
+        public ActorsController(MoviesContext context, ILogger<HomeController> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: Actors
         [HttpGet]
         public IActionResult Index()
         {
-            return View(_context.Actors.Select(a => new ActorViewModel
-            {
-                Id = a.Id,
-                Name = a.Name,
-                LastName = a.LastName,
-                BirthDate = a.BirthDate
-            }).ToList());
+            var actor = _mapper.Map<IEnumerable<Actor>, IEnumerable<ActorViewModel>>(_context.Actors.ToList());
+            return View(actor);
         }
 
         // GET: Actors/Details/5
@@ -42,14 +42,7 @@ public class ActorsController : Controller
                 return NotFound();
             }
 
-            var viewModel = _context.Actors.Where(a => a.Id == id).Select(a => new ActorViewModel
-            {
-                Id = a.Id,
-                Name = a.Name,
-                LastName = a.LastName,
-                BirthDate = a.BirthDate
-            }).FirstOrDefault();
-
+            var viewModel = _mapper.Map<ActorViewModel>(_context.Actors.FirstOrDefault(a => a.Id == id));
             
             if (viewModel == null)
             {
@@ -59,28 +52,24 @@ public class ActorsController : Controller
             return View(viewModel);
         }
         
-        // GET: Movies/Create
+        // GET: Actors/Create
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Movies/Create
+        // POST: Actors/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CheckingTheAgeOfActor]
         public IActionResult Create([Bind("Name, LastName, BirthDate")] InputActorViewModel inputModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(new Actor
-                {
-                    Name = inputModel.Name,
-                    LastName = inputModel.LastName,
-                    BirthDate = inputModel.BirthDate
-                });
+                _context.Add(_mapper.Map<Actor>(inputModel));
                 _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
@@ -89,7 +78,7 @@ public class ActorsController : Controller
         }
         
         [HttpGet]
-        // GET: Movies/Edit/5
+        // GET: Actors/Edit/5
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -97,12 +86,7 @@ public class ActorsController : Controller
                 return NotFound();
             }
 
-            var editModel = _context.Actors.Where(a => a.Id == id).Select(a => new EditActorViewModel
-            {
-                Name = a.Name,
-                LastName = a.LastName,
-                BirthDate = a.BirthDate
-            }).FirstOrDefault();
+            var editModel = _mapper.Map<EditActorViewModel>(_context.Actors.FirstOrDefault(a => a.Id == id));
             
             if (editModel == null)
             {
@@ -112,25 +96,20 @@ public class ActorsController : Controller
             return View(editModel);
         }
 
-        // POST: Movies/Edit/5
+        // POST: Actors/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CheckingTheAgeOfActor]
         public IActionResult Edit(int id, [Bind("Name, LastName, BirthDate")] EditActorViewModel editModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var actor = new Actor
-                    {
-                        Id = id,
-                        Name = editModel.Name,
-                        LastName = editModel.LastName,
-                        BirthDate = editModel.BirthDate
-                    };
-                    
+                    var actor = _mapper.Map<Actor>(editModel);
+                    actor.Id = id;
                     _context.Update(actor);
                     _context.SaveChanges();
                 }
@@ -151,7 +130,7 @@ public class ActorsController : Controller
         }
         
         [HttpGet]
-        // GET: Movies/Delete/5
+        // GET: Actors/Delete/5
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -159,12 +138,7 @@ public class ActorsController : Controller
                 return NotFound();
             }
 
-            var deleteModel = _context.Actors.Where(a => a.Id == id).Select(a => new DeleteActorViewModel
-            {
-                Name = a.Name,
-                LastName = a.LastName,
-                BirthDate = a.BirthDate
-            }).FirstOrDefault();
+            var deleteModel = _mapper.Map<DeleteActorViewModel>(_context.Actors.FirstOrDefault(a => a.Id == id));
             
             if (deleteModel == null)
             {
@@ -174,7 +148,7 @@ public class ActorsController : Controller
             return View(deleteModel);
         }
         
-        // POST: Movies/Delete/5
+        // POST: Actors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
