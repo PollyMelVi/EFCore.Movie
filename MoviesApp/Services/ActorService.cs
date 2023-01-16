@@ -29,8 +29,10 @@ public class ActorService : IActorService
             return _mapper.Map<IEnumerable<Actor>, IEnumerable<ActorDto>>(_context.Actors.ToList());
         }
 
-        public ActorDto UpdateActor(ActorDto actorDto)
+        public ActorDto UpdateActor(int id, ActorDto actorDto)
         {
+            id = (int)actorDto.Id;
+            
             if (actorDto.Id == null)
             {
                 //упрощение для примера
@@ -49,7 +51,7 @@ public class ActorService : IActorService
             }
             catch (DbUpdateException)
             {
-                if (!ActorExists((int) actorDto.Id))
+                if (!ActorExists(id))
                 {
                     //упрощение для примера
                     //лучше всего генерировать ошибки и обрабатывать их на уровне конроллера
