@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MoviesApp.Data;
 using MoviesApp.Middleware;
+using MoviesApp.Services;
 
 namespace MoviesApp
 {
@@ -37,6 +38,9 @@ namespace MoviesApp
             
             //Подключаем AutoMapper
             services.AddAutoMapper(typeof(Startup));
+            
+            services.AddScoped<IMovieService, MovieService>();
+            services.AddScoped<IActorService, ActorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
