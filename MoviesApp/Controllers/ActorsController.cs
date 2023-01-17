@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using MoviesApp.Filters;
 using MoviesApp.Services;
 using MoviesApp.Services.Dto;
@@ -25,6 +26,7 @@ public class ActorsController : Controller
 
         // GET: Actors
         [HttpGet]
+        [Authorize]
         public IActionResult Index()
         {
             var actor = _mapper.Map<IEnumerable<ActorDto>, IEnumerable<ActorViewModel>>(_service.GetAllActors());
@@ -33,6 +35,7 @@ public class ActorsController : Controller
 
         // GET: Actors/Details/5
         [HttpGet]
+        [Authorize]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -52,6 +55,7 @@ public class ActorsController : Controller
         
         // GET: Actors/Create
         [HttpGet]
+        [Authorize(Roles = "Admin")] 
         public IActionResult Create()
         {
             return View();
@@ -61,6 +65,7 @@ public class ActorsController : Controller
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")] 
         [ValidateAntiForgeryToken]
         [CheckingTheAgeOfActor]
         public IActionResult Create([Bind("Name, LastName, BirthDate")] InputActorViewModel inputModel)
@@ -74,6 +79,7 @@ public class ActorsController : Controller
         }
         
         [HttpGet]
+        [Authorize(Roles = "Admin")] 
         // GET: Actors/Edit/5
         public IActionResult Edit(int? id)
         {
@@ -96,6 +102,7 @@ public class ActorsController : Controller
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")] 
         [ValidateAntiForgeryToken]
         [CheckingTheAgeOfActor]
         public IActionResult Edit(int id, [Bind("Name, LastName, BirthDate")] EditActorViewModel editModel)
@@ -117,6 +124,7 @@ public class ActorsController : Controller
         }
         
         [HttpGet]
+        [Authorize(Roles = "Admin")] 
         // GET: Actors/Delete/5
         public IActionResult Delete(int? id)
         {
@@ -137,6 +145,7 @@ public class ActorsController : Controller
         
         // POST: Actors/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")] 
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
