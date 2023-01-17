@@ -44,6 +44,7 @@ namespace MoviesApp.Controllers
         [HttpPut("{id}")] // PUT: api/movies/5
         public IActionResult UpdateMovie(int id, MovieDto editDto)
         {
+            editDto.Id = id;
             var movie = _service.UpdateMovie(editDto);
 
             if (movie==null)

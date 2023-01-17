@@ -105,7 +105,7 @@ public class ActorsController : Controller
                 var actor = _mapper.Map<ActorDto>(editModel);
                 actor.Id = id;
                  
-                var result = _service.UpdateActor(id, actor);
+                var result = _service.UpdateActor(actor);
 
                 if (result == null)
                 {

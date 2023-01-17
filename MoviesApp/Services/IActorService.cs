@@ -7,7 +7,7 @@ public interface IActorService
 {
     ActorDto GetActor(int id);
     IEnumerable<ActorDto> GetAllActors();
-    ActorDto UpdateActor(int id, ActorDto actorDto);
+    ActorDto UpdateActor(ActorDto actorDto);
     ActorDto AddActor(ActorDto actorDto);
     ActorDto DeleteActor(int id);
 }

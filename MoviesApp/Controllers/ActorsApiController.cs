@@ -45,13 +45,13 @@ namespace MoviesApp.Controllers
         
         [HttpPut("{id}")] // PUT: api/actors/5
         public IActionResult UpdateActor(int id, ActorDto editDto)
-        { 
-            var actor = _service.UpdateActor(id, editDto);
+        {
+            editDto.Id = id;
+            var actor = _service.UpdateActor(editDto);
             if (actor==null)
             {
                 return BadRequest();
             }
-
             return Ok(actor);
         }
         
